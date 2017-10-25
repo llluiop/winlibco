@@ -17,7 +17,7 @@ DLL_EXPORT int create(const CoRoutine** co, const RoutineAttr& attr, std::functi
 	});
 	
 	*co = create_env(attr, f);
-
+	 
 	return 0;
 }
 
