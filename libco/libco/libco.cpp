@@ -8,7 +8,7 @@
 thread_local LibRoutine librt;
 std::once_flag flag;
 
-DLL_EXPORT int create(const CoRoutine** co, const RoutineAttr& attr)
+DLL_EXPORT int create(const CoRoutine** co, const RoutineAttr& attr, std::function<void()> f)
 {
 	std::call_once(flag, []() {
 		CoRoutine rt;

@@ -34,7 +34,7 @@ struct LibRoutine
 
 extern "C"
 {
-	DLL_EXPORT int create(CoRoutine** co, const RoutineAttr& attr);
+	DLL_EXPORT int create(CoRoutine** co, const RoutineAttr& attr, std::function<void()> f);
 	DLL_EXPORT void resume(const CoRoutine* co);
 	DLL_EXPORT void yield(const CoRoutine* co);
 	DLL_EXPORT void release(const CoRoutine* co);
