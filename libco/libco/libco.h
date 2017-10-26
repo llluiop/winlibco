@@ -22,7 +22,7 @@ struct CoRoutine
 // RoutineAttr
 struct RoutineAttr
 {
-
+	int size;
 };
 
 //manager all the routines
