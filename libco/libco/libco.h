@@ -8,15 +8,31 @@
 #define DLL_EXPORT __declspec(dllimport)
 #endif
 
+struct StackMem
+{
+	int size;
+	char* stack_buffer;
+	char* stack_bp;
+};
+
 //represent a routine
 struct CoRoutine
 {
 	std::function<void()> f;
-	int eip;
-	int ebp;
-	int esp;
-	int stack;
-	int size;
+	
+	char* stack_sp;
+	int save_size;
+	char* stack_buffer;
+
+	char start;
+	char end;
+	char shared;
+
+	Coctx coctx;
+
+	StackMem* mem;
+
+	LibRoutine* rt;
 };
 
 // RoutineAttr
@@ -28,14 +44,14 @@ struct RoutineAttr
 //manager all the routines
 struct LibRoutine
 {
-	CoRoutine cot[128];
+	CoRoutine* cot[128];
 	int size;
 };
 
 extern "C"
 {
-	DLL_EXPORT int create(CoRoutine** co, const RoutineAttr& attr, std::function<void()> f);
-	DLL_EXPORT void resume(const CoRoutine* co);
-	DLL_EXPORT void yield(const CoRoutine* co);
-	DLL_EXPORT void release(const CoRoutine* co);
+	DLL_EXPORT int create(CoRoutine** co, const RoutineAttr* attr, std::function<void()> f);
+	DLL_EXPORT void resume( CoRoutine* co);
+	DLL_EXPORT void yield( CoRoutine* co);
+	DLL_EXPORT void release( CoRoutine* co);
 }

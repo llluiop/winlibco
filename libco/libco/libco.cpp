@@ -3,15 +3,17 @@
 
 #include "stdafx.h"
 #include "libco.h"
+#include "coctx.h"
 #include <mutex>
 
 thread_local LibRoutine librt;
 std::once_flag flag;
 
-DLL_EXPORT int create(const CoRoutine** co, const RoutineAttr& attr, std::function<void()> f)
+DLL_EXPORT int create(const CoRoutine** co, const RoutineAttr* attr, std::function<void()> f)
 {
 	std::call_once(flag, []() {
-		CoRoutine rt;
+		auto rt = create_env(nullptr, nullptr);
+		
 		librt.cot[0] = rt;
 		++librt.size;
 	});
@@ -22,25 +24,52 @@ DLL_EXPORT int create(const CoRoutine** co, const RoutineAttr& attr, std::functi
 }
 
 
-DLL_EXPORT void resume(const CoRoutine* co)
+DLL_EXPORT void resume( CoRoutine* co)
 {
+	auto co_now = librt.cot[librt.size - 1];
+	if (co_now->start != 1)
+	{
+		co_now->start = 1;
+	}
+
+	librt.cot[librt.size++] = co;
+}
+
+DLL_EXPORT void yield( CoRoutine* co)
+{
+
 
 }
 
-DLL_EXPORT void yield(const CoRoutine* co)
-{
-
-}
-
-DLL_EXPORT void release(const CoRoutine * co)
+DLL_EXPORT void release( CoRoutine * co)
 {
 	
 }
 
+StackMem* alloc_stackmem(int size)
+{
+	StackMem* mem = new StackMem;
+	mem->size = size;
+	mem->stack_buffer = new char[size];
+	mem->stack_bp = mem->stack_buffer + size;
 
-CoRoutine* create_env(const RoutineAttr& attr, std::function<void()> f)
+	return mem;
+}
+
+CoRoutine* create_env(const RoutineAttr* attr, std::function<void()> f)
 {
 	CoRoutine* co = new CoRoutine;
+	co->f = f;
+	co->start = 0;
+	co->end = 0;
+	co->shared = 1;
+	
+	coctx_init(&co->coctx);
+
+	int size = attr == nullptr ? 10 * 1024 : attr->size;
+	co->mem = alloc_stackmem(size);
+
+	co->rt = &librt;
 
 	return co;
 }
