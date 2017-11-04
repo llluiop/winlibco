@@ -72,7 +72,7 @@ struct RoutineAttr
 
 extern "C"
 {
-	DLL_EXPORT int create(CoRoutine** co, const RoutineAttr* attr, std::function<void()> f);
+	DLL_EXPORT int create(CoRoutine** co,const RoutineAttr* attr, std::function<void()> f);
 	DLL_EXPORT void resume( CoRoutine* co);
 	DLL_EXPORT void yield(CoRoutine* co);
 	DLL_EXPORT void yield_env(LibRoutine* rt);

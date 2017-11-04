@@ -2,30 +2,31 @@
 //
 
 #include "stdafx.h"
-
+#include "../libco/libco.h"
 #include <cmath>
 #include <cstdio>
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include <thread>
 using namespace std;
 
+void func()
+{
+	cout << "this is a test:" << this_thread::get_id()<<endl;
+}
 
 int main() {
-	/* Enter your code here. Read input from STDIN. Print output to STDOUT */
-	int v;
-	cin >> v;
-	vector<int> vec;
-	int tmp;
-	for (int i = 0; i < v; i++)
-	{
-		cin >> tmp;
-		vec.push_back(tmp);
-	}
+	CoRoutine* co = nullptr;
+	RoutineAttr attr = { 1024 * 128 };
 
-	auto t1 = std::find(std::begin(vec), std::end(vec), v);
-	auto t2 = std::begin(vec);
-	cout <<  t1 - t2;
+	int ret = create(&co, &attr, func);
+	
+	cout << "continue" << endl;
+
+	resume(co);
+
+	cout << "run ends" << endl;
 	return 0;
 }
 

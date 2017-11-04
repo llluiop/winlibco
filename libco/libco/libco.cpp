@@ -59,7 +59,7 @@ CoRoutine* create_env(const RoutineAttr* attr, std::function<void()> f)
 
 
 
-DLL_EXPORT int create(const CoRoutine** co, const RoutineAttr* attr, std::function<void()> f)
+DLL_EXPORT int create(CoRoutine** co, const RoutineAttr* attr, std::function<void()> f)
 {
 	std::call_once(flag, []() {
 		auto rt = create_env(nullptr, nullptr);
@@ -70,7 +70,7 @@ DLL_EXPORT int create(const CoRoutine** co, const RoutineAttr* attr, std::functi
 		librt.stack[0] = rt;
 		++librt.size;
 	});
-	
+
 	*co = create_env(attr, f);
 	 
 	return 0;

@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libco", "libco\libco.vcxproj", "{66C3AA8B-A541-41EC-BB29-5EF2B577C117}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test\test.vcxproj", "{2C09210B-7E16-4D2E-9E45-DA7C51F73F9E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{66C3AA8B-A541-41EC-BB29-5EF2B577C117} = {66C3AA8B-A541-41EC-BB29-5EF2B577C117}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
