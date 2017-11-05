@@ -23,7 +23,7 @@ void Cfn(CoRoutine* co)
 
 void swap(CoRoutine* cur, CoRoutine* pending)
 {
-
+	coctx_swap(&cur->coctx, &pending->coctx);
 }
 
 StackMem* alloc_stackmem(int size)
@@ -91,7 +91,7 @@ DLL_EXPORT void resume( CoRoutine* co)
 
 DLL_EXPORT void yield( CoRoutine* co)
 {
-
+	yield_env(co->rt);
 
 }
 
@@ -100,6 +100,7 @@ DLL_EXPORT void yield_env(LibRoutine * rt)
 	auto cur = rt->stack[rt->size - 1];
 	auto last = rt->stack[rt->size - 2];
 
+	rt->size--;
 
 	swap(cur, last);
 }
