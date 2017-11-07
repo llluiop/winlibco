@@ -2,11 +2,34 @@
 
 #include <functional>
 
+
 #ifdef LIBCO_EXPORTS
 #define DLL_EXPORT __declspec(dllexport)
 #else
 #define DLL_EXPORT __declspec(dllimport)
 #endif
+
+struct Coctx
+{
+	void* reg[8];
+	int size;
+	char* sp;
+};
+
+struct Coctx_param
+{
+	void* s1;
+	void* s2;
+};
+
+
+//manager all the routines
+struct CoRoutine;
+struct LibRoutine
+{
+	CoRoutine* stack[128];
+	int size;
+};
 
 struct StackMem
 {
@@ -43,12 +66,7 @@ struct RoutineAttr
 	int size;
 };
 
-//manager all the routines
-struct LibRoutine
-{
-	CoRoutine* stack[128];
-	int size;
-};
+
 
 
 

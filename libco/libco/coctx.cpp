@@ -20,7 +20,39 @@ void coctx_make(Coctx *ctx, CoRoutinePfn pfn, Coctx_param& param)
 	ctx->reg[2] = sp;//esp
 }
 
-void coctx_swap(Coctx * cur, Coctx * pending)
+__declspec(naked) void coctx_swap(Coctx * cur, Coctx * pending)
 {
+	__asm
+	{
+		leal 4(%esp), %eax //sp 
+		movl 4(%esp), %esp
+		leal 32(%esp), %esp //parm a : &regs[7] + sizeof(void*)
+
+		pushl %eax //esp ->parm a 
+
+		pushl %ebp
+		pushl %esi
+		pushl %edi
+		pushl %edx
+		pushl %ecx
+		pushl %ebx
+		pushl - 4(%eax)
+
+
+		movl 4(%eax), %esp //parm b -> &regs[0]
+
+		popl %eax  //ret func addr
+		popl %ebx
+		popl %ecx
+		popl %edx
+		popl %edi
+		popl %esi
+		popl %ebp
+		popl %esp
+		pushl %eax //set ret func addr
+
+		xorl %eax, %eax
+		ret
+	}
 
 }

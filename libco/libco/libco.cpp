@@ -26,6 +26,39 @@ void swap(CoRoutine* cur, CoRoutine* pending)
 
 }
 
+StackMem* alloc_stackmem(int size)
+{
+	StackMem* mem = new StackMem;
+	mem->size = size;
+	mem->stack_buffer = new char[size];
+	mem->stack_bp = mem->stack_buffer + size;
+
+	return mem;
+}
+
+CoRoutine* create_env(const RoutineAttr* attr, std::function<void()> f)
+{
+	CoRoutine* co = new CoRoutine;
+	co->f = f;
+	co->start = 0;
+	co->end = 0;
+	co->shared = false;
+
+	coctx_init(&co->coctx);
+
+	int size = attr == nullptr ? 10 * 1024 : attr->size;
+	co->mem = alloc_stackmem(size);
+
+	co->coctx.size = size;
+	co->coctx.sp = co->mem->stack_buffer;
+
+	co->rt = &librt;
+
+	return co;
+}
+
+
+
 DLL_EXPORT int create(const CoRoutine** co, const RoutineAttr* attr, std::function<void()> f)
 {
 	std::call_once(flag, []() {
@@ -76,33 +109,5 @@ DLL_EXPORT void release( CoRoutine * co)
 	
 }
 
-StackMem* alloc_stackmem(int size)
-{
-	StackMem* mem = new StackMem;
-	mem->size = size;
-	mem->stack_buffer = new char[size];
-	mem->stack_bp = mem->stack_buffer + size;
 
-	return mem;
-}
 
-CoRoutine* create_env(const RoutineAttr* attr, std::function<void()> f)
-{
-	CoRoutine* co = new CoRoutine;
-	co->f = f;
-	co->start = 0;
-	co->end = 0;
-	co->shared = false;
-	
-	coctx_init(&co->coctx);
-
-	int size = attr == nullptr ? 10 * 1024 : attr->size;
-	co->mem = alloc_stackmem(size);
-
-	co->coctx.size = size;
-	co->coctx.sp = co->mem->stack_buffer;
-
-	co->rt = &librt;
-
-	return co;
-}
