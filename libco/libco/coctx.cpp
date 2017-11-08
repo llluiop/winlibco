@@ -19,3 +19,8 @@ void coctx_make(Coctx *ctx, CoRoutinePfn pfn, Coctx_param& param)
 	ctx->reg[1] = pfn; //eip
 	ctx->reg[2] = sp;//esp
 }
+
+void coctx_swap(Coctx * cur, Coctx * pending)
+{
+
+}

@@ -18,7 +18,12 @@ void Cfn(CoRoutine* co)
 
 
 	co->end = 1;
-	yield(co);
+	yield_env(&librt);
+}
+
+void swap(CoRoutine* cur, CoRoutine* pending)
+{
+
 }
 
 DLL_EXPORT int create(const CoRoutine** co, const RoutineAttr* attr, std::function<void()> f)
@@ -59,7 +64,11 @@ DLL_EXPORT void yield( CoRoutine* co)
 
 DLL_EXPORT void yield_env(LibRoutine * rt)
 {
+	auto cur = rt->stack[rt->size - 1];
+	auto last = rt->stack[rt->size - 2];
 
+
+	swap(cur, last);
 }
 
 DLL_EXPORT void release( CoRoutine * co)
