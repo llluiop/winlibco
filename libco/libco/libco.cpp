@@ -11,7 +11,11 @@ std::once_flag flag;
 
 void Cfn(CoRoutine* co)
 {
-	co->f();
+	if (co->f)
+	{
+		co->f();
+	}
+
 
 	co->end = 1;
 	yield(co);
@@ -50,6 +54,11 @@ DLL_EXPORT void resume( CoRoutine* co)
 DLL_EXPORT void yield( CoRoutine* co)
 {
 
+
+}
+
+DLL_EXPORT void yield_env(LibRoutine * rt)
+{
 
 }
 
