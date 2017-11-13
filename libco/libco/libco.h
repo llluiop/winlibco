@@ -28,6 +28,8 @@ struct CoRoutine
 	char end;
 	char shared;
 
+	bool main;
+
 	Coctx coctx;
 
 	StackMem* mem;
@@ -44,9 +46,11 @@ struct RoutineAttr
 //manager all the routines
 struct LibRoutine
 {
-	CoRoutine* cot[128];
+	CoRoutine* stack[128];
 	int size;
 };
+
+
 
 extern "C"
 {
