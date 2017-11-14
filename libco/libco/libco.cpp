@@ -9,9 +9,12 @@
 thread_local LibRoutine librt;
 std::once_flag flag;
 
-void Cfn(Coctx* co)
+void Cfn(CoRoutine* co)
 {
-	
+	co->f();
+
+	co->end = 1;
+	yield(co);
 }
 
 DLL_EXPORT int create(const CoRoutine** co, const RoutineAttr* attr, std::function<void()> f)
@@ -38,7 +41,7 @@ DLL_EXPORT void resume( CoRoutine* co)
 	if (co_now->start != 1)
 	{
 		co_now->start = 1;
-		coctx_make(&co->coctx, Cfn, )
+		coctx_make(&co->coctx, (CoRoutinePfn)Cfn, Coctx_param{ co, nullptr });
 	}
 
 	librt.stack[librt.size++] = co;
