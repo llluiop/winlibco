@@ -13,20 +13,18 @@ using namespace std;
 
 void func()
 {
-	cout << "this is a test:" << this_thread::get_id()<<endl;
+	cout << "this is in coroutine:" << this_thread::get_id()<<endl;
 }
 
 int main() {
 	CoRoutine* co = nullptr;
 	RoutineAttr attr = { 1024 * 128 };
-	int i = 0x01020304;
+
 	int ret = create(&co, &attr, func);
-	
-	cout << "continue" << endl;
-	cout << &((CoRoutine*)0)->coctx;
+	cout << "this is in main thread:" << this_thread::get_id() << endl;
 	resume(co);
 
 	cout << "run ends" << endl;
-	return 0;
+	return getchar();
 }
 
