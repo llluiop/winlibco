@@ -46,7 +46,7 @@ CoRoutine* create_env(const RoutineAttr* attr, std::function<void()> f)
 
 	coctx_init(&co->coctx);
 
-	int size = attr == nullptr ? 10 * 1024 : attr->size;
+	int size = attr == nullptr ? 128 * 1024 : attr->size;
 	co->mem = alloc_stackmem(size);
 
 	co->coctx.size = size;
@@ -62,12 +62,12 @@ CoRoutine* create_env(const RoutineAttr* attr, std::function<void()> f)
 DLL_EXPORT int create(CoRoutine** co, const RoutineAttr* attr, std::function<void()> f)
 {
 	std::call_once(flag, []() {
-		auto rt = create_env(nullptr, nullptr);
-		rt->main = true;
+		auto co = create_env(nullptr, nullptr);
+		co->main = true;
 		
-		coctx_init(&rt->coctx);
+		coctx_init(&co->coctx);
 
-		librt.stack[0] = rt;
+		librt.stack[0] = co;
 		++librt.size;
 	});
 
@@ -80,13 +80,14 @@ DLL_EXPORT int create(CoRoutine** co, const RoutineAttr* attr, std::function<voi
 DLL_EXPORT void resume( CoRoutine* co)
 {
 	auto co_now = librt.stack[librt.size - 1];
-	if (co_now->start != 1)
+	if (co->start != 1)
 	{
-		co_now->start = 1;
+		co->start = 1;
 		coctx_make(&co->coctx, (CoRoutinePfn)Cfn, Coctx_param{ co, nullptr });
 	}
 
 	librt.stack[librt.size++] = co;
+	swap(co_now, co);
 }
 
 DLL_EXPORT void yield( CoRoutine* co)
